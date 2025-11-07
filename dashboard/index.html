@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>A-1 HQ — Outputs</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; margin: 24px; }
+    h1 { margin: 0 0 16px 0; }
+    #outputs { display: grid; grid-template-columns: repeat(auto-fill, 180px); gap: 14px; }
+    .thumb { border: 1px solid #ddd; border-radius: 10px; padding: 10px; }
+    .thumb img { width: 100%; height: auto; border-radius: 8px; display:block; }
+    .name { font-size: 12px; margin-top: 6px; word-break: break-word; text-align: center; }
+  </style>
+</head>
+<body>
+  <h1>Outputs</h1>
+  <div id="outputs">Loading…</div>
+
+  <script type="module">
+    import { listOutputs } from './modules.js';
+
+    (async () => {
+      try {
+        const data = await listOutputs();
+        const el = document.querySelector('#outputs');
+        if (!data || !data.length) {
+          el.textContent = 'No outputs found yet. Render in ComfyUI, then refresh.';
+          return;
+        }
+        el.innerHTML = data.map(item => `
+          <div class="thumb">
+            <img src="${item.thumb || ''}" alt="${item.name}">
+            <div class="name">${item.name}</div>
+          </div>
+        `).join('');
+      } catch (e) {
+        document.querySelector('#outputs').textContent = 'Failed to load outputs-index.json';
+        console.error(e);
+      }
+    })();
+  </script>
+</body>
+</html>
